@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import logo from './assets/logo.png';
 
 export default function App() {
@@ -23,10 +23,24 @@ export default function App() {
 
         {/*Add internal styles to text tag*/}
         <Text style={ styles.instructions }>
-            To share a photo from your phone with a friend, just press the button below!
+            To share a photo, just press the button below!
         </Text>
 
-      <StatusBar style="auto" />
+        {/*Add a simple button & basic inline styles*/}
+        {/*<TouchableOpacity
+            onPress={()=>alert('Hello World!')}
+            style={{backgroundColor: 'blue'}}>
+            <Text style={{ fontSize: 20, color: '#fff' }}>Choose a Photo</Text>
+        </TouchableOpacity>*/}
+
+        {/*Add a simple button & internal styles*/}
+        <TouchableOpacity
+            onPress={()=>alert('Hello World!')}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Choose a Photo</Text>
+        </TouchableOpacity>
+
+      {/*<StatusBar style="auto" />*/}
     </View>
   );
 }
@@ -34,18 +48,30 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(44, 110, 160, 0.95)',
     alignItems: 'center',
     justifyContent: 'center',
   },
     logo: {
         width: 305,
         height: 159,
-        marginBottom: 10,
+        marginBottom: 15,
     },
     instructions:{
-        color: '#888',
+        color: '#222',
         fontSize: 18,
         marginHorizontal: 15,
+        textAlign: 'center',
+        marginBottom: 25,
+    },
+    button: {
+        backgroundColor: 'rgba(0, 206, 209, 0.94)',
+        padding: 15,
+        borderRadius: 5,
+
+    },
+    buttonText : {
+      fontSize: 20,
+        color: '#4c4c4f',
     },
 });
