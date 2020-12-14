@@ -1,12 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import logo from './assets/logo.png';
-import * as ImagePicker from 'expo-image-picker'
-import * as Sharing from 'expo-sharing'
+import * as ImagePicker from 'expo-image-picker';
+import * as Sharing from 'expo-sharing';
+import uploadToAnonymousFilesAsync from 'anonymous-files'
 
 export default function App() {
     const [selectedImage, setSelectedImage] =React.useState(null);
+
+    /*Request permission to access gallery*/
+    /*let openImagePickerAsync = async ()=>{
+        let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if(permissionResult.granted === false){
+            alert("Permission to access gallery is required!");
+            return;
+        }
+        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+
+        if (pickerResult.cancelled === true){
+            return;
+        }
+        setSelectedImage({localUri: pickerResult.uri});
+    };*/
 
     /*Request permission to access gallery*/
     let openImagePickerAsync = async ()=>{
@@ -21,13 +38,28 @@ export default function App() {
         if (pickerResult.cancelled === true){
             return;
         }
-        setSelectedImage({localUri: pickerResult.uri});
+        if(Platform.OS === 'web'){
+            let remoteUri = await uploadToAnonymousFilesAsync(pickerResult.uri);
+            setSelectedImage({localUri:pickerResult.uri, remoteUri});
+        }else{
+            setSelectedImage({ localUri:pickerResult.uri, remoteUri:null });
+        }
     };
 
     /*Check if sharing available on trying platform*/
-    let openShareDialogAsync = async ()=> {
+    /*let openShareDialogAsync = async ()=> {
         if(!(await Sharing.isAvailableAsync())){
             alert(`Oops, sharing isn't available on your platform`);
+            return;
+        }
+
+        await  Sharing.shareAsync(selectedImage.localUri);
+    }*/
+
+    /*Get remoteUri for web platform*/
+    let openShareDialogAsync = async ()=> {
+        if(!(await Sharing.isAvailableAsync())){
+            alert(`The image is available for sharing at: ${selectedImage.remoteUri}`);
             return;
         }
 
@@ -42,7 +74,7 @@ export default function App() {
                     style={styles.thumbnail}
                 />
                 <TouchableOpacity onPress={openShareDialogAsync} style={styles.button}>
-                    <Text style={styles.buttonText}>Share this photo</Text>
+                    <Text style={styles.buttonText}>Share this picture</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -67,7 +99,7 @@ export default function App() {
 
         {/*Add internal styles to text tag*/}
         <Text style={ styles.instructions }>
-            To share a photo, just press the button below!
+            To share a picture, just press the button below!
         </Text>
 
         {/*Add a simple button & basic inline styles*/}
@@ -88,7 +120,7 @@ export default function App() {
         <TouchableOpacity
             onPress={openImagePickerAsync}
             style={styles.button}>
-            <Text style={styles.buttonText}>Choose a Photo</Text>
+            <Text style={styles.buttonText}>Choose a picture</Text>
         </TouchableOpacity>
 
       {/*<StatusBar style="auto" />*/}
